@@ -19,6 +19,7 @@ export default function App() {
           <Stack.Navigator>
             <Stack.Screen name={"To Do List"} component={Todo}/>
             <Stack.Screen name="List" component={List}/>
+            <Stack.Screen name="codes" component={codes}/>
               </Stack.Navigator>  
         </NavigationContainer>
     

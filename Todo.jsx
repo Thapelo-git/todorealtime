@@ -29,35 +29,35 @@ useEffect(() => {
   fetchData()
   
 }, [])
-const addHandle=()=>{
+// const addHandle=()=>{
   
-  if(isUpdating){
-    itemRef.child(currentKey).update({text});
-  fetchData()
-  setText('')
-  setIsUpdate(false)
+//   if(isUpdating){
+//     itemRef.child(currentKey).update({text});
+//   fetchData()
+//   setText('')
+//   setIsUpdate(false)
  
-  }
-  if(!isUpdating){
-    if(text === '')
-    {
-      Alert.alert('Comfirm','enter Todo..',[
-        {
-          text:'ok',
-        }
-      ])
-    }else{
-      itemRef.push({text,iscomplete,formatD});
-      fetchData()
-      setText('')
-      setFormatD('')
-      Keyboard.dismiss()
-    }
+//   }
+//   if(!isUpdating){
+//     if(text === '')
+//     {
+//       Alert.alert('Comfirm','enter Todo..',[
+//         {
+//           text:'ok',
+//         }
+//       ])
+//     }else{
+//       itemRef.push({text,iscomplete,formatD});
+//       fetchData()
+//       setText('')
+//       setFormatD('')
+//       Keyboard.dismiss()
+//     }
 
    
-  }
+//   }
   
-}
+// }
 
 const fetchData=()=>{
   itemRef.on('value',snap=>{
@@ -170,38 +170,64 @@ fetchData()
 
 
     return (
-        <SafeAreaView style={{flex:1,backgroundColor:'#fff'}}>
-    
-    <ScrollView >
-    <View style={styles.header}>
+        <SafeAreaView style={{flex:1,backgroundColor:'#fff',alignItems: 'center',
+        justifyContent: 'space-between',borderColor:'grey',padding:20,width:'100%'}}>
+{/*     
+    <TouchableOpacity style={{width:20,height:20}} onPress={()=>navigation.navigate('codes')}>
+     
+      <View style={{width:100,height:100,backgroundColor:'blue'}}>
+      <Icon name='add'/>
+      
+      </View>
+    </TouchableOpacity> */}
+    <Avatar
+      source={{uri:'https://images.pexels.com/photos/5717451/pexels-photo-5717451.jpeg?cs=srgb&dl=pexels-polina-kovaleva-5717451.jpg&fm=jpg'}}
+      style={{width:'100%',height:140}}/>
+    {/* <View style={styles.header}>
       <Text style={{fontWeight:'bold',fontSize:40,color:'blue'}}>Todo App</Text>
       <Avatar
       source={{uri:'https://images.pexels.com/photos/5717451/pexels-photo-5717451.jpeg?cs=srgb&dl=pexels-polina-kovaleva-5717451.jpg&fm=jpg'}}
       style={{width:300,height:100}}/>
-    </View>
-    <View style={{flexDirection:'row',flex:1,marginTop:110}}>
+    </View> */}
+    <Pressable style={[
+            styles.button,{backgroundColor: 'pink'}
+          ] }
+          onPress={()=>navigation.navigate('codes')}>
+      <Text>
+        Add To Do
+      </Text>
+          </Pressable>
+   
+    {/* <View style={{flexDirection:'row',flex:1,marginTop:20}}>
     <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
         value={formatD}
-       //onChangeText={(e)=>(setFormatD(e))}
+     
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
        
       />
-    <TextInput style={styles.textinput}
-    multiline
-      value={text} onChangeText={(e)=>(setText(e))}
-      placeholder={'Enter your Todo...'}/>
+    
       
     
-    {/* <Button style={styles.addWrapper}  disabled={!formatD} title={isUpdating?'Update':'Add'} onPress={addHandle}/> */}
+   
     
       </View >
-      <Text style={{color:'tomato'}}> select todo Date </Text>
-      <View style={{flexDirection:'row',flex:1}}>
       
-      {/* <Button style={styles.addWrapper}   title={'select date'} onPress={showDatePicker}/> */}
+      <View style={{
+      width:'100%',
+      
+      
+      marginTop:-150,
+      elevation:12,
+      borderRadius:7,
+      alignItems:'flex-start',
+      justifyContent:'flex-start',
+      borderWidth:0.34}}>
+        <View style={{padding:30,width:'100%'}}>
+      <Text style={{color:'tomato'}}> select todo Date </Text>
+    
       <Pressable style={[
             styles.button,{backgroundColor: 'blue'}
           ] }
@@ -210,30 +236,30 @@ fetchData()
         Select date
       </Text>
           </Pressable>
-      {
+     
+      <TextInput style={styles.textinput}
+    multiline
+      value={text} onChangeText={(e)=>(setText(e))}
+      placeholder={'Enter your Todo...'}/>
+      <View>
+       {
         !formatD?(
-      //     <Pressable style={[
-      //       styles.button,{backgroundColor: 'gainsboro'}
-      //     ] } disabled={true} onPress={addHandle}>
-      // <Text>
-      // Add ToDo
-      // </Text>
-      //     </Pressable>
+   
            <Button style={[
             styles.button
           ] }  disabled={true} title={isUpdating?'Update':'Add ToDo'} onPress={addHandle}/>
         ):(
-          <Pressable style={[
-            styles.button,{backgroundColor: 'blue'}
-          ] } disabled={false} onPress={addHandle}>
-      <Text>
-      Add ToDo
-      </Text>
-          </Pressable>
-          // <Button style={styles.addWrapper}  disabled={false} title={'Add ToDo'} onPress={addHandle}/>
+          <Button style={[
+            styles.button
+          ] }  disabled={false} title={isUpdating?'Update':'Add ToDo'} onPress={addHandle}/>
+      
+         
         )
       }
       </View>
+      </View>
+      </View>
+       */}
       {/* <Button style={styles.addWrapper}  disabled={!formatD} title={isUpdating?'Update':'Add ToDo'} onPress={addHandle}/> */}
      
       {/* {list.map((item,index)=>{
@@ -257,12 +283,23 @@ fetchData()
         )
       })} */}
        
+       <ScrollView >
+         <View style={{padding:30,
+         width:'100%',
+      backgroundColor:'white',
+      // borderEndColor:'black',
+      elevation:12,
+      borderRadius:7,
+      alignItems:'center',
+      justifyContent:'flex-start',
+      // borderWidth:0.34,
+      marginTop:90}}>
          {
-           list.length?(
+           list.length?(<View>
 
 <SwipeableFlatList
             showsVerticalScrollIndicator={true}
-            contentContainerStyle={{padding:30,paddingBottom:100}}
+            contentContainerStyle={{padding:10,paddingBottom:100}}
             data={list}
             //  renderItem={displayTodos} style={styles.listItem}
             //style={{backgroundColor:iscomplete? 'gray':'#fff' }}
@@ -287,9 +324,9 @@ fetchData()
             </ListItem> 
       
       <View>
-      <TouchableOpacity style={styles.action} onPress={()=>markTodo(item.key,item.text,item.formatD)}>
+      {/* <TouchableOpacity style={styles.action} onPress={()=>markTodo(item.key,item.text,item.formatD)}>
               <Icon name='done'/>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       </View>
                   
       
@@ -319,6 +356,7 @@ fetchData()
                      
             </SwipeableQuickActions>
             )}
+            
             // renderRightActions={({item}) => (
             //   <SwipeableQuickActions>
             //              <SwipeableQuickActionButton
@@ -340,6 +378,8 @@ fetchData()
             //  )}
             
             />
+            
+            </View>
            ):(
              <Text style={{fontSize:30}}>
              Nothing 
@@ -349,20 +389,22 @@ fetchData()
       
     
 
-            <View style={{flexDirection:'row'}}>
+            
+         </View>
+         </ScrollView>
+         <View style={{flexDirection:'row'}}>
             <Text style={{fontWeight:'bold'}}>You have {list.length} pending tasks</Text>
           <TouchableOpacity onPress={()=>clearTodos()}>
                                 <Icon name="delete" size={30} color='red' />
                                 </TouchableOpacity>
         
          </View>
-         </ScrollView>
     </SafeAreaView>
     )
 }
 const styles = StyleSheet.create({
     listItem:{
-      padding:20,
+      padding:5,
       backgroundColor:'white',
       // borderEndColor:'black',
       elevation:12,
@@ -374,17 +416,18 @@ const styles = StyleSheet.create({
     },
     button : {
             borderRadius: 20,
-            width: '40%',
+            width: '60%',
             // backgroundColor: 'blue',
             padding: 20,
             textAlign: "center",
             textTransform: "uppercase",
             height:50,
+            marginTop:60
             
     },
     header: {
       padding:20,
-      marginTop:20,
+      marginTop:-100,
       height:'15%',
       // flexDirection: 'row',
       backgroundColor: '#fff',

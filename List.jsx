@@ -30,14 +30,7 @@ const List = ({route,navigation}) => {
         
         
       }
-      const handleUpdate=(key,text)=>{
-  
-        setCurrenkey(key)
-        setIsUpdate(true)
-        setText(text)
-        
-        
-      }
+    
     const fetchData=()=>{
         itemRef.on('value',snap=>{
           let item = [];
