@@ -17,9 +17,9 @@ export default function App() {
   return (
     <NavigationContainer>
           <Stack.Navigator>
-            <Stack.Screen name={"To Do List"} component={Todo}/>
-            <Stack.Screen name="List" component={List}/>
-            <Stack.Screen name="codes" component={codes}/>
+            <Stack.Screen name={"To Do List"} options = {{headerShown :false}} component={Todo}/>
+            <Stack.Screen name="List" options = {{headerShown :false}} component={List}/>
+            <Stack.Screen name="codes" options = {{headerShown :false}} component={codes}/>
               </Stack.Navigator>  
         </NavigationContainer>
     

@@ -3,7 +3,7 @@ import React,{useState,useEffect} from 'react';
 import { Alert, Keyboard, TextInput,Pressable } from 'react-native'
 import { TouchableOpacity } from 'react-native'
 import { SafeAreaView,ScrollView, StyleSheet, Text, View ,FlatList,LayoutAnimation} from 'react-native';
-import { ListItem,Avatar ,Button,Image} from 'react-native-elements';
+import { ListItem,Avatar ,Button,Image, Divider} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import codes from './codes';
 import {
@@ -14,14 +14,14 @@ import {
   import firebase from "./firebase"
   import DateTimePickerModal from "react-native-modal-datetime-picker";
   import Feather from "react-native-vector-icons/Feather"
-  // import { ScrollView } from 'react-native-gesture-handler';
+import styled from 'styled-components/native'
   const itemRef = firebase.ref('/ToDo')
 const Todo = ({navigation}) => {
     const [text,setText]=useState('')
 const [list,setList]=useState([])
   const [date,setDate] = useState( Date())
 let [isUpdating,setIsUpdate]=useState(false)
-let [iscomplete,setIscomplete]=useState(false)
+let [iscomplete,setIscomplete]=useState('Not Complete')
 let [currentKey,setCurrenkey]=useState('')
 const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -48,11 +48,12 @@ const addHandle=()=>{
         }
       ])
     }else{
-      itemRef.push({text,iscomplete,formatD});
+      itemRef.push({text,iscomplete,formatD,categoryname,categorycolor});
       fetchData()
       setText('')
       setFormatD('')
       Keyboard.dismiss()
+      navigation.navigate('To Do List')
     }
 
    
@@ -141,10 +142,7 @@ fetchData()
     //   setList(item)
     // })
   }
-  // let temp = new Date()
-
-  // let fDate = temp.format('l')
-  // setDate(fDate )
+ 
   const displayTodos=(item,index)=>{
     return(
         // <View style={styles.listItem}>
@@ -168,20 +166,42 @@ fetchData()
 
 
 
+const ButtonContainer=styled.View`
+height:45;
+      width:105;
+      borderRadius:30;
+      alignItems:center;
+      justifyContent:center;
+      paddingHorizontal:5;
+      flexDirection:row;
+     
 
-
+`;
+// backgroundColor:${(props)=>(props.name === "High" ? "#1adb24" :"#fff")}  
+//backgroundColor:${(props)=>(props.name === "Medium" ? "#e6b120" :"#fff")}
+//backgroundColor:${(props)=>(props.name === "Low" ? "#d91a1a" :"#fff")}
+const Btn =[
+  {id:'1',name:'High',backgroundColor:"#1adb24"},
+  {id:'2',name:'Medium',backgroundColor:"#e6b120"},
+  {id:'3',name:'Low',backgroundColor:"#d91a1a"},
+  
+]
+const [ selectedBtnIndex,setSelectedBtnIndex] = useState(0);
+const  [categoryname,setCategoryname]=useState('')
+const  [categorycolor,setCategorycolor]=useState('')
+const markcategory=(key,categoryname,categorycolor)=>{
+  setSelectedBtnIndex(key)
+  setCategoryname(categoryname)
+  setCategorycolor(categorycolor)
+ }
     return (
-        <SafeAreaView style={{flex:1,backgroundColor:'#fff',alignItems: 'center',
-        justifyContent: 'space-between',borderColor:'grey',padding:10}}>
-     <Text style={{fontWeight:'bold',fontSize:40,color:'grey'}}>Add Todos</Text>
+        <SafeAreaView style={{padding:10,width:'100%'}}>
+          <Icon name='keyboard-backspace' onPress={()=>navigation.goBack()} color='grey' size={30} style={{marginTop:40}}/>
+          <View style={{alignItems:'center',justifyContent:'center',}}>
+     <Text style={{fontWeight:'bold',fontSize:20,color:'grey',}}>Add new Task</Text>
+     </View>
     
-    {/* <View style={styles.header}>
-      <Text style={{fontWeight:'bold',fontSize:40,color:'blue'}}>Todo App</Text>
-      <Avatar
-      source={{uri:'https://images.pexels.com/photos/5717451/pexels-photo-5717451.jpeg?cs=srgb&dl=pexels-polina-kovaleva-5717451.jpg&fm=jpg'}}
-      style={{width:300,height:100}}/>
-    </View> */}
-    <View style={{flexDirection:'row',flex:1,marginTop:20}}>
+    <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
     <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
@@ -201,33 +221,57 @@ fetchData()
       <View style={{
       width:'100%',
       
-      // borderEndColor:'black',
-      marginTop:-40,
-      elevation:12,
-      borderRadius:7,
+      
+      elevation:2,
+      
       alignItems:'flex-start',
       justifyContent:'flex-start',
-      borderWidth:0.34}}>
-        <View style={{padding:30,width:'100%'}}>
-      <Text style={{color:'tomato'}}> select todo Date </Text>
+      }}>
+        <View style={{padding:10,width:'100%'}}>
+      <Text style={{color:'tomato',fontSize:20}}> Priority </Text>
+      <Divider style={{alignItems:'flex-start',alignSelf:'flex-start',marginVertical:10,
+      justifyContent:'flex-start',width:100}}/>
       {/* <Button style={styles.addWrapper}   title={'select date'} onPress={showDatePicker}/> */}
       <Pressable style={[
-            styles.button,{backgroundColor: 'blue',flexDirection:"row"}
+            styles.button,{flexDirection:"row",alignItems:'flex-start',justifyContent:'flex-start'}
           ] }
         onPress={showDatePicker}>
           <Feather
                  name="calendar" size={22}
                  color='black'
                  />
-      <Text>
-        Select date
+      <Text style={{marginHorizontal:30,fontSize:17}}>
+        Due Date
       </Text>
           </Pressable>
-     
+          <View style={{width:'100%',height:60,borderWidth:0.5,borderRadius:20,borderColor:'#0225A1',
+        flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+          {Btn.map((category,index)=>(
+                <TouchableOpacity key={index} activeOpacity={0.8}
+                onPress={()=> markcategory(index,category.name,category.backgroundColor)} 
+                
+                >
+                <View style={{
+                    backgroundColor:selectedBtnIndex == index
+                    ?(category.backgroundColor)
+                    :('gainsboro'),
+                    ...styles.categoryBtn,
+                }}>
+               <Text style={{
+                        fontSize:15,fontWeight:'bold',
+                        color:selectedBtnIndex == index?'#fff' :'grey'
+                    }}>{category.name}</Text>
+                   
+                </View>
+                </TouchableOpacity>
+            ))}
+          </View>
+          <Divider style={{alignItems:'flex-start',alignSelf:'flex-start',marginVertical:10,
+      justifyContent:'flex-start',width:100}}/>
       <TextInput style={styles.textinput}
-    multiline
+    //multiline
       value={text} onChangeText={(e)=>(setText(e))}
-      placeholder={'Enter your Todo...'}/>
+      placeholder={'Write task here...'}/>
       <View>
        {
         !formatD?(
@@ -362,13 +406,12 @@ const styles = StyleSheet.create({
       
     },
     button : {
-            borderRadius: 20,
-            width: '50%',
-            // backgroundColor: 'blue',
-            padding: 20,
+            
+          
+            
             textAlign: "center",
             textTransform: "uppercase",
-            height:65,
+            height:30,
             
     },
     header: {
@@ -381,11 +424,11 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
     },
     textinput:{
-      height:90,
-      padding:20,
-      width:'80%',
+      height:60,
+      padding:10,
+      width:'100%',
       margin:4,
-      borderRadius:10,
+    
       backgroundColor:'gainsboro',
 
       // outline:'none'
@@ -412,7 +455,25 @@ const styles = StyleSheet.create({
     backgroundColor:'green',
     justifyContent:'center',
     alignItems:'center'
-  }
-  });
+  },
+  categoryBtn:{
+    height:45,
+    width:105,
+    borderRadius:30,
+    alignItems:'center',
+    justifyContent:'center',
+    paddingHorizontal:5,
+    flexDirection:'row',
 
-export default Todo
+  },
+  });
+  // export default ({onPress,text,size,theme})=>{
+  //   const buttonStyles=[style.button];
+  //   const textStyles=[styles.text];
+  //   if(text ==='High'){
+
+  //   }
+
+  // }
+export default Todo;
+

@@ -6,21 +6,25 @@ import { SafeAreaView,ScrollView, StyleSheet, Text, View ,FlatList,LayoutAnimati
 import { ListItem,Avatar ,Button,Image} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import codes from './codes';
+import Feather from 'react-native-vector-icons/Feather'
+import AntDesign from 'react-native-vector-icons/AntDesign'
 import {
     SwipeableFlatList,
     SwipeableQuickActions,
     SwipeableQuickActionButton,
   } from 'react-native-swipe-list';
+  import FontAwesome from 'react-native-vector-icons/FontAwesome'
   import firebase from "./firebase"
   import DateTimePickerModal from "react-native-modal-datetime-picker";
-  // import { ScrollView } from 'react-native-gesture-handler';
+import { StatusBar } from 'expo-status-bar';
+import { Divider } from 'react-native-elements';
   const itemRef = firebase.ref('/ToDo')
 const Todo = ({navigation}) => {
     const [text,setText]=useState('')
 const [list,setList]=useState([])
   const [date,setDate] = useState( Date())
 let [isUpdating,setIsUpdate]=useState(false)
-let [iscomplete,setIscomplete]=useState(false)
+const [iscomplete,setIscomplete]=useState(false)
 let [currentKey,setCurrenkey]=useState('')
 const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -29,6 +33,7 @@ useEffect(() => {
   fetchData()
   
 }, [])
+
 // const addHandle=()=>{
   
 //   if(isUpdating){
@@ -64,7 +69,8 @@ const fetchData=()=>{
     let item = [];
     const a_ =snap.val();
     for (let x in a_){
-      item.push({text:a_[x].text,key:x,formatD:a_[x].formatD,iscomplete:a_[x]})
+      item.push({text:a_[x].text,key:x,formatD:a_[x].formatD,iscomplete:a_[x].iscomplete,
+        categoryname:a_[x].categoryname,categorycolor:a_[x].categorycolor})
     }
     setList(item)
   })
@@ -118,7 +124,7 @@ fetchData()
    
   };
 
-  const  markTodo=(key,text,formatD)=>{
+  const  markTodo=(key,iscomplete)=>{
     // const newTodos = list.map(item=>{
     //   if(item.id==todoId){
     //     return {...item,iscomplete:true}
@@ -129,211 +135,99 @@ fetchData()
     // setList(newTodos)
     //setCurrenkey(key)
  //   setText(text)
-    itemRef.child(key).update({text:text,iscomplete:true,formatD:formatD});
+    itemRef.child(key).update({iscomplete:iscomplete});
   fetchData()
-    // itemRef.on('value',snap=>{
-    //   let item = [];
-    //   const a_ =snap.val();
-    //   for (let x in a_){
-    //     item.push({text:a_[x].text,key:x,iscomplete:true})
-    //   }
-    //   setList(item)
-    // })
+  
   }
-  // let temp = new Date()
-
-  // let fDate = temp.format('l')
-  // setDate(fDate )
-  const displayTodos=(item,index)=>{
-    return(
-        // <View style={styles.listItem}>
-          <View style={{ flexDirection:'row',padding:5,borderWidth:0.34,margin:10}}>
-            <Text>{item.text}</Text>
-            <Text style={{flex:0.70,fontWeight:'bold',backgroundColor:'blue'}}>
-            {item.text}
-            </Text>
-            {/* <ListItem key={index}>
-                <ListItem.Content>
-                    <ListItem.Title>
-                        {item.text}
-                    </ListItem.Title>
-                    
-                </ListItem.Content>
-                
-            </ListItem> */}
-        </View>
-    )
-}
+  
+ 
 
 
 
 
 
     return (
-        <SafeAreaView style={{flex:1,backgroundColor:'#fff',alignItems: 'center',
-        justifyContent: 'space-between',borderColor:'grey',padding:20,width:'100%'}}>
-{/*     
-    <TouchableOpacity style={{width:20,height:20}} onPress={()=>navigation.navigate('codes')}>
-     
-      <View style={{width:100,height:100,backgroundColor:'blue'}}>
-      <Icon name='add'/>
-      
-      </View>
-    </TouchableOpacity> */}
-    <Avatar
-      source={{uri:'https://images.pexels.com/photos/5717451/pexels-photo-5717451.jpeg?cs=srgb&dl=pexels-polina-kovaleva-5717451.jpg&fm=jpg'}}
-      style={{width:'100%',height:140}}/>
-    {/* <View style={styles.header}>
-      <Text style={{fontWeight:'bold',fontSize:40,color:'blue'}}>Todo App</Text>
-      <Avatar
-      source={{uri:'https://images.pexels.com/photos/5717451/pexels-photo-5717451.jpeg?cs=srgb&dl=pexels-polina-kovaleva-5717451.jpg&fm=jpg'}}
-      style={{width:300,height:100}}/>
-    </View> */}
-    <Pressable style={[
-            styles.button,{backgroundColor: 'pink'}
-          ] }
-          onPress={()=>navigation.navigate('codes')}>
-      <Text>
-        Add To Do
-      </Text>
-          </Pressable>
+        <SafeAreaView style={{flex:1,borderColor:'grey',padding:20,width:'100%'}}>
+          <StatusBar
+  backgroundColor="#0225A1"
+          barStyle="light-content"/>
+  <View style={{flexDirection:'row',padding:20,alignItems:'center',justifyContent:'space-between'}}>
+      <Text style={{fontSize:30}}>ToDo List</Text>
+      <TouchableOpacity onPress={()=>clearTodos()}>
+        <Icon name='delete' size={30} color='red'/>
+      </TouchableOpacity>
+  </View>
+  <View style={{backgroundColor:'white',elevation:4,width:'100%',height:80,alignItems:'center',justifyContent:'center'}}>
+      <Text style={{fontWeight:'bold'}}>Today</Text>
+      <Text>{date}</Text>
+  </View>
    
-    {/* <View style={{flexDirection:'row',flex:1,marginTop:20}}>
-    <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        value={formatD}
-     
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-       
-      />
-    
-      
     
    
     
-      </View >
-      
-      <View style={{
-      width:'100%',
-      
-      
-      marginTop:-150,
-      elevation:12,
-      borderRadius:7,
-      alignItems:'flex-start',
-      justifyContent:'flex-start',
-      borderWidth:0.34}}>
-        <View style={{padding:30,width:'100%'}}>
-      <Text style={{color:'tomato'}}> select todo Date </Text>
-    
-      <Pressable style={[
-            styles.button,{backgroundColor: 'blue'}
-          ] }
-        onPress={showDatePicker}>
-      <Text>
-        Select date
-      </Text>
-          </Pressable>
-     
-      <TextInput style={styles.textinput}
-    multiline
-      value={text} onChangeText={(e)=>(setText(e))}
-      placeholder={'Enter your Todo...'}/>
-      <View>
-       {
-        !formatD?(
-   
-           <Button style={[
-            styles.button
-          ] }  disabled={true} title={isUpdating?'Update':'Add ToDo'} onPress={addHandle}/>
-        ):(
-          <Button style={[
-            styles.button
-          ] }  disabled={false} title={isUpdating?'Update':'Add ToDo'} onPress={addHandle}/>
-      
-         
-        )
-      }
-      </View>
-      </View>
-      </View>
-       */}
       {/* <Button style={styles.addWrapper}  disabled={!formatD} title={isUpdating?'Update':'Add ToDo'} onPress={addHandle}/> */}
      
-      {/* {list.map((item,index)=>{
-        return(
-          <View style={{ flexDirection:'row',padding:5,borderWidth:0.34,margin:10}}>
-            
-            <Text style={{flex:0.70}}>
-            {item.text}
-            </Text>
-           
-            
-            <TouchableOpacity onPress={()=>handleUpdate(item.key,item.text)}>
-            
-            <Icon name="update" size={30} color='blue' />
-            </TouchableOpacity>
-           <TouchableOpacity onPress={()=>handleDelete(item.key)}>
-           <Icon name="delete" size={30} color='red' />
-           </TouchableOpacity>
-            
-          </View>
-        )
-      })} */}
+   
        
        <ScrollView >
-         <View style={{padding:30,
-         width:'100%',
-      backgroundColor:'white',
-      // borderEndColor:'black',
-      elevation:12,
-      borderRadius:7,
-      alignItems:'center',
-      justifyContent:'flex-start',
-      // borderWidth:0.34,
-      marginTop:90}}>
+         <View style={{paddingVertical:12}}>
          {
-           list.length?(<View>
+           list.length?(<View >
 
 <SwipeableFlatList
             showsVerticalScrollIndicator={true}
-            contentContainerStyle={{padding:10,paddingBottom:100}}
+            //contentContainerStyle={{padding:10,paddingBottom:100}}
             data={list}
             //  renderItem={displayTodos} style={styles.listItem}
             //style={{backgroundColor:iscomplete? 'gray':'#fff' }}
             renderItem={({item})=>(
               
-              <View style={[
-                styles.listItem
-              ]}>
-                  <TouchableOpacity onPress={()=>navigation.navigate('List',item)}>
-                  <Text style={{fontSize:10}}>swipe right to delete n click Chevron to update</Text>
+              <View style={
+                styles.listItem}
+              >
+               
+                  
                   
                   {/* <Text style={{fontSize:20}}>{item.text}  </Text> 
                   textDecorationLine: item.status === true ? "line-through" : "none"*/}
-                  <ListItem  style={{backgroundColor:iscomplete? 'gray':'#fff' }}>
+                  {/* <ListItem >
                 <ListItem.Content>
                     <ListItem.Title>
                         {item.text}
                     </ListItem.Title>
-                    <Text>{item.formatD}</Text>
+                    
                 </ListItem.Content>
                 <ListItem.Chevron/>
-            </ListItem> 
-      
-      <View>
-      {/* <TouchableOpacity style={styles.action} onPress={()=>markTodo(item.key,item.text,item.formatD)}>
-              <Icon name='done'/>
-      </TouchableOpacity> */}
+            </ListItem>  */}
+      <Text style={{color:item.categorycolor}}>{item.categoryname}</Text>
+      <View style={{flexDirection:'row',alignItems:'flex-start',justifyContent:'flex-start',marginHorizontal:13}}>
+      <Icon name='fiber-manual-record' color={item.categorycolor} size={25}/>
+      <Text style={{fontSize:20}}>{item.text}</Text>
+    
       </View>
-                  
-      
-                  </TouchableOpacity>
+         
+        <Divider style={{width: 160,height:5, justifyContent:'flex-start', alignItems:'flex-start', alignSelf:'flex-start'}}/>   
+      <Text style={{fontSize:20,color:'grey'}}>Due {item.formatD}</Text>
+        <View style={{height:5}}></View>          
                  
-                  
-            {/* <Text>{date}</Text> */}
+      <View style={{flexDirection:'row',alignItems:'stretch',justifyContent:'space-between'}}>
+      {
+                item.iscomplete == 'Completed'?(
+                <View style={{flexDirection:'row',alignItems:'flex-start',justifyContent:'flex-start'}}>
+                  <Feather name='check-circle' color='green' size={30}/>
+                <Button disabled={true} title='Completed'/>
+                </View>):(
+                  <View style={{flexDirection:'row',alignItems:'flex-start',justifyContent:'flex-start'}}>
+                   
+                  <Button onPress={()=>markTodo(item.key,'Completed')} title='Complete'/>
+                  </View>
+                )
+              }
+              <TouchableOpacity style={{flexDirection:'row',alignItems:'center',justifyContent:'center',marginHorizontal:110}} onPress={()=>navigation.navigate('List',item)}>
+                <FontAwesome name='pencil-square-o' size={20} color='green'/>
+                <Text >Update</Text> 
+              </TouchableOpacity>
+              </View> 
               </View>
               
           )}
@@ -350,8 +244,9 @@ fetchData()
                   
                      
                      />
-              <TouchableOpacity onPress={()=>handleDelete(item.key)}>
-           <Icon name="delete" size={30} color={'red'} />
+              <TouchableOpacity  onPress={()=>handleDelete(item.key)}>
+           <Icon name="delete" size={100} color={'red'} />
+          
            </TouchableOpacity>
                      
             </SwipeableQuickActions>
@@ -378,11 +273,13 @@ fetchData()
             //  )}
             
             />
-            
+             
             </View>
+            
            ):(
-             <Text style={{fontSize:30}}>
-             Nothing 
+             <Text style={{fontSize:25,}}>
+             No Task Today 
+             
              </Text>
            )
          }
@@ -392,11 +289,18 @@ fetchData()
             
          </View>
          </ScrollView>
-         <View style={{flexDirection:'row'}}>
-            <Text style={{fontWeight:'bold'}}>You have {list.length} pending tasks</Text>
+         <View style={{
+         alignItems:'center',justifyContent:'center',bottom:20,}}>
+           <View style={{width:60,height:60,backgroundColor:'#0225A1',borderRadius:30,
+          alignItems:'center',justifyContent:'center'}}>
+          <TouchableOpacity onPress={()=>navigation.navigate('codes')}>
+            <Icon name='add' size={30} color='white'/>
+          </TouchableOpacity>
+           </View>
+            {/* <Text style={{fontWeight:'bold'}}>You have {list.length} pending tasks</Text>
           <TouchableOpacity onPress={()=>clearTodos()}>
                                 <Icon name="delete" size={30} color='red' />
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
         
          </View>
     </SafeAreaView>
@@ -404,19 +308,20 @@ fetchData()
 }
 const styles = StyleSheet.create({
     listItem:{
-      padding:5,
+      padding:10,
       backgroundColor:'white',
-      // borderEndColor:'black',
-      elevation:12,
+      width:'100%',
+      height:135,
+      elevation:8,
       borderRadius:7,
       alignItems:'flex-start',
       justifyContent:'flex-start',
-      borderWidth:0.34
+    marginVertical:10
       
     },
     button : {
             borderRadius: 20,
-            width: '60%',
+            width: 120,
             // backgroundColor: 'blue',
             padding: 20,
             textAlign: "center",
@@ -463,6 +368,7 @@ const styles = StyleSheet.create({
   action:{
     height:25,
     width:25,
+    borderRadius:10,
     backgroundColor:'green',
     justifyContent:'center',
     alignItems:'center'
